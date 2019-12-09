@@ -63,6 +63,9 @@ int main(int argc, char *argv[])
 	current = origin;
 	Point prev;
 	Point closest_intersection;
+	Point min_delay_intersection;
+	int min_delay_distance = 2147483647;
+	int dist = 0;
 	while (next_input(&direction, &amount))
 	{
 		prev = current;
@@ -82,6 +85,7 @@ int main(int argc, char *argv[])
 				break;
 		}
 
+		int wire1_dist = 0;
 		for (int i = 0; i < n_points; i++)
 		{
 			LinePair pair = parse_points(current, prev, wire1[i], wire1[i + 1]);
@@ -90,10 +94,24 @@ int main(int argc, char *argv[])
 			{
 				if (distance(intersection, origin) < distance(closest_intersection, origin))
 					closest_intersection = intersection;
+
+				if (*argv[1] == '2') // part 2
+				{
+					int partial_distances = distance(prev, intersection) + distance(wire1[i], intersection);
+					int distance = partial_distances + dist + wire1_dist;
+					if (distance < min_delay_distance)
+					{
+						min_delay_distance = distance;
+						min_delay_intersection = intersection;
+					}
+				}
 			}
+			wire1_dist += distance(wire1[i], wire1[i + 1]);
 		}
+		dist += amount;
 	}
 	printf("(%d, %d)\n", closest_intersection.x, closest_intersection.y);
+	printf("%d\n", min_delay_distance);
 	return 0;
 
 }
