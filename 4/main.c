@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -12,7 +13,7 @@ char valid_2(int password);
 
 int main(int argc, char *argv[])
 {
-	/* valid_2(677888); */
+	/* valid_2(688889); */
 	/* return 0; */
 	int n_valid_passwords = 0;
 	int n_valid_passwords_2 = 0;
@@ -21,7 +22,10 @@ int main(int argc, char *argv[])
 		if (valid(i))
 			n_valid_passwords++;
 		if (valid_2(i))
+		{
+			printf("%d is valid\n", i);
 			n_valid_passwords_2++;
+		}
 	}
 	printf("Part 1: %d\nPart 2: %d\n", n_valid_passwords, n_valid_passwords_2);
 	return 0;
@@ -53,32 +57,37 @@ bool valid_2(int password)
 {
 	int orig_pass = password;
 	byte digits[6];
-	for (int i = 6, j = 0; i > 0; i--)
+	bool pair = FALSE;
+	for (int i = 6, j = 0; i > 0; i--, j++)
 	{
 		digits[j] = password / (int)pow(10, i - 1);
 		password -= digits[j] * (int)pow(10, i - 1);
-
-		if (j > 0)
-		{
-			if (digits[j - 1] == digits[j])
-			{
-				if (digits[j - 2] == digits[j])
-				{
-					printf("%d failed pair check\n", orig_pass);
-					return FALSE;
-				}
-				else
-				{
-					if (digits[j] < digits[j - 1])
-					{
-						printf("%d failed increase check\n", orig_pass);
-						return FALSE;
-					}
-					else
-						return TRUE;
-				}
-			}
-		}
-		j++;
 	}
+	for (int i = 1; i < 6; i++) // increase check
+	{
+		if (digits[i] < digits[i - 1])
+		{
+			/* printf("%d failed increase check\n", orig_pass); */
+			return FALSE;
+		}
+	}
+	for (int i = 0; i < 5; i++) // pair check
+	{
+		byte digit = digits[i];
+		if (digit == digits[i + 1])
+		{
+			byte block_count = 0;
+			for (; digits[i] == digit; i++, block_count++);
+			if (block_count == 2)
+				return pair = TRUE;
+		}
+		/* if (digits[i - 1] == digits[i] && digits[i + 1] != digits[i]) */
+		/* { */
+		/* 	/1* printf("%d passed pair check\n", orig_pass); *1/ */
+		/* 	return TRUE; */
+		/* } */
+	}
+	printf("%d %s pair check\n", orig_pass, pair ? "passed" : "failed");
+	/* return pair; */
+	return FALSE;
 }
