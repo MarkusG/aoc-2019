@@ -13,8 +13,6 @@ char valid_2(int password);
 
 int main(int argc, char *argv[])
 {
-	/* valid_2(688889); */
-	/* return 0; */
 	int n_valid_passwords = 0;
 	int n_valid_passwords_2 = 0;
 	for (int i = 245318; i <= 765747; i++)
@@ -66,12 +64,9 @@ bool valid_2(int password)
 	for (int i = 1; i < 6; i++) // increase check
 	{
 		if (digits[i] < digits[i - 1])
-		{
-			/* printf("%d failed increase check\n", orig_pass); */
 			return FALSE;
-		}
 	}
-	for (int i = 0; i < 5; i++) // pair check
+	for (int i = 0; i < 6; i++) // pair check
 	{
 		byte digit = digits[i];
 		if (digit == digits[i + 1])
@@ -80,14 +75,9 @@ bool valid_2(int password)
 			for (; digits[i] == digit; i++, block_count++);
 			if (block_count == 2)
 				return pair = TRUE;
+			else
+				i--;
 		}
-		/* if (digits[i - 1] == digits[i] && digits[i + 1] != digits[i]) */
-		/* { */
-		/* 	/1* printf("%d passed pair check\n", orig_pass); *1/ */
-		/* 	return TRUE; */
-		/* } */
 	}
-	printf("%d %s pair check\n", orig_pass, pair ? "passed" : "failed");
-	/* return pair; */
 	return FALSE;
 }
