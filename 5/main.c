@@ -10,11 +10,19 @@ int program_len;
 int run_intcode(char **src, const int len, const int n);
 void parse_instruction(const char *instruction, int *opcode, int *mode1, int *mode2, int *mode3);
 int load_program(char ***instructions);
+int _load_program(int **src);
 
 int main(int argc, char *argv[])
 {
 	char **src;
-	int n_instructions = load_program(&src);
+	int *i_src;
+	int n_instructions = _load_program(&i_src);
+	for (int i = 0; i < n_instructions; i++)
+	{
+		printf("%d\n", i_src[i]);
+	}
+	printf("%d\n", n_instructions);
+	return 0;
 
 	run_intcode(src, n_instructions, 1);
 	return 0;
@@ -90,10 +98,10 @@ int load_program(char ***instructions)
 	return n_instructions;
 }
 
-int _load_program(int *src)
+int _load_program(int **src)
 {
 	int bufsize = INSTRUCTION_BUFSIZE;
-	src = malloc(bufsize * sizeof(int));
+	*src = malloc(bufsize * sizeof(int));
 	char c = 0;
 	int src_len = 0;
 	while (c != EOF)
@@ -101,8 +109,15 @@ int _load_program(int *src)
 		if (src_len > bufsize)
 		{
 			bufsize += INSTRUCTION_BUFSIZE;
-			src = realloc(src, bufsize * sizeof(int));
+			*src = realloc(*src, bufsize * sizeof(int));
 		}
+
+		char buf[6];
+		int i = 0;
+		while ((c = getchar()) != ',' && c != EOF)
+			buf[i++] = c;
+		buf[i] = '\0';
+		(*src)[src_len++] = atoi(buf);
 	}
 }
 
