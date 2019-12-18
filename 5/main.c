@@ -28,19 +28,21 @@ int run_intcode(int *src, const int len, const int input)
 	{
 		int opcode, mode1, mode2, mode3;
 		parse_instruction(src[pos], &opcode, &mode1, &mode2, &mode3);
+		int param1 = mode1 ? src[pos + 1] : src[src[pos + 1]];
+		int param2 = mode2 ? src[pos + 2] : src[src[pos + 2]];
 		switch (opcode)
 		{
 			case 1: ; // add
 				int sum = 0;
-				sum += mode1 ? src[pos + 1] : src[src[pos + 1]];
-				sum += mode2 ? src[pos + 2] : src[src[pos + 2]];
+				sum += param1;
+				sum += param2;
 				src[src[pos + 3]] = sum;
 				pos += 4;
 				break;
 			case 2: ; // multiply
 				int prod = 1;
-				prod *= mode1 ? src[pos + 1] : src[src[pos + 1]];
-				prod *= mode2 ? src[pos + 2] : src[src[pos + 2]];
+				prod *= param1;
+				prod *= param2;
 				src[src[pos + 3]] = prod;
 				pos += 4;
 				break;
@@ -49,36 +51,29 @@ int run_intcode(int *src, const int len, const int input)
 				pos += 2;
 				break;
 			case 4: // read
-				printf("%d\n", mode1 ? src[pos + 1] : src[src[pos + 1]]);
+				printf("%d\n", param1);
 				pos += 2;
 				break;
 			case 5: // jump if true
-				if (mode1 ? src[pos + 1] : src[src[pos + 1]])
-					pos = mode2 ? src[pos + 2] : src[src[pos + 2]];
+				if (param1)
+					pos = param2;
 				else
 					pos += 3;
 				break;
 			case 6: // jump if false
-				if (!(mode1 ? src[pos + 1] : src[src[pos + 1]]))
-					pos = mode2 ? src[pos + 2] : src[src[pos + 2]];
+				if (!param1)
+					pos = param2;
 				else
 					pos += 3;
 				break;
 			case 7: ; // less than
-				// TODO fix these macros to make this work and not be ugly
-				// but i have to go take a final now
-				// i will probably never open this file again unless i need it for a future challenge
-				int _param1 = PARAM1;
-				int _param2 = PARAM2;
-				if (_param1 < _param2)
+				if (param1 < param2)
 					src[src[pos + 3]] = 1;
 				else
 					src[src[pos + 3]] = 0;
 				pos += 4;
 				break;
 			case 8: ; // equals
-				int param1 = PARAM1;
-				int param2 = PARAM2;
 				if (param1 == param2)
 					src[src[pos + 3]] = 1;
 				else
