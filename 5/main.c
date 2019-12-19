@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define INSTRUCTION_BUFSIZE 256
 #define INSTRUCTION_LENGTH 6
-
-#define PARAM1 mode1 ? src[pos + 1] : src[src[pos + 1]]
-#define PARAM2 mode2 ? src[pos + 2] : src[src[pos + 2]]
 
 int run_intcode(int *src, const int len, const int input);
 void parse_instruction(const int instruction, int *opcode, int *mode1, int *mode2, int *mode3);
@@ -28,8 +24,11 @@ int run_intcode(int *src, const int len, const int input)
 	{
 		int opcode, mode1, mode2, mode3;
 		parse_instruction(src[pos], &opcode, &mode1, &mode2, &mode3);
-		int param1 = mode1 ? src[pos + 1] : src[src[pos + 1]];
-		int param2 = mode2 ? src[pos + 2] : src[src[pos + 2]];
+		int param1, param2;
+		if (pos + 1 < len)
+			param1 = mode1 ? src[pos + 1] : src[src[pos + 1]];
+		if (pos + 2 < len)
+			param2 = mode2 ? src[pos + 2] : src[src[pos + 2]];
 		switch (opcode)
 		{
 			case 1: ; // add
